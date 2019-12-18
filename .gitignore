@@ -1,0 +1,12 @@
+.lsp-session-v1
+auto-save-list/
+elpa/
+history
+ido.last
+lib
+projectile-bookmarks.eld
+projectile.cache
+recentf
+saves/
+smex-items
+transient/
