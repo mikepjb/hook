@@ -7,6 +7,7 @@
 
 ;; TODO make graceful failure for deps (e.g no internet or melpa)
 
+(prefer-coding-system 'utf-8)
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (menu-bar-mode -1)
@@ -17,15 +18,22 @@
 (global-auto-revert-mode 1)
 (savehist-mode 1) ;; save minibuffer commands between sessions
 (ido-mode t)
-(setq split-height-threshold 1200
-      split-width-threshold 2000
-      debug-on-error t
-      inhibit-splash-screen t)
+(setq-default
+ split-height-threshold 1200
+ split-width-threshold 2000
+ debug-on-error t
+ inhibit-splash-screen t
+ vc-follow-symlinks t
+ column-number-mode t
+ ido-enable-flex-matching t
+ load-prefer-newer t
+ fill-column 80
+ compilation-ask-about-save nil
+ backup-directory-alist `(("." . ,(concat user-emacs-directory "saves")))
+ custom-file (make-temp-file ""))
 ;; TODO 14 for laptop, 8 for 1440p work
 (ignore-errors (set-frame-font "xos4 Terminus-14"))
 (defalias 'yes-or-no-p 'y-or-n-p)
-
-(setq-default custom-file (make-temp-file ""))
 
 ;; Initialize package manager
 (require 'package)
@@ -48,14 +56,22 @@
     (binding
      `(("M-o" . other-window)
        ("C-c i" . ,(ifn (find-file (concat user-emacs-directory "init.el"))))
+       ("C-c n" . ,(ifn (find-file (concat user-emacs-directory "notes.org"))))
        ("C-c g" . magit)
        ("C-c p" . projectile-find-file)
        ("C-c P" . projectile-grep)
+       ("C-h" . delete-backward-char)
+       ("M-H" . ,help-map)
        ("C-;" . company-capf)
        ("M-k" . paredit-forward-barf-sexp)
        ("M-l" . paredit-forward-slurp-sexp)
        ("M-RET" . toggle-frame-fullscreen)))
   (global-set-key (kbd (car binding)) (cdr binding)))
+
+(add-hook 'ido-setup-hook
+	  (lambda ()
+	    (define-key ido-completion-map (kbd "C-w") 'backward-kill-word)
+	    (define-key ido-file-completion-map (kbd "C-w") 'ido-delete-backward-word-updir)))
 
 (include paredit)
 (add-hook 'emacs-lisp-mode-hook #'enable-paredit-mode)
@@ -113,7 +129,9 @@
 (add-hook 'clojure-mode-hook #'enable-paredit-mode)
 
 (defun code-config ()
-  (linum-mode 1))
+  (if (version<= "26.0.50" emacs-version)
+      (display-line-numbers-mode 1)
+      (linum-mode 1)))
 
 (dolist
     (hook
@@ -124,10 +142,12 @@
 ;; themes
 
 ;; (include doom-theme)
-;; (include color-theme-sanityinc-tomorrow)
+(include color-theme-sanityinc-tomorrow)
+(load-theme 'sanityinc-tomorrow-bright t)
 ;; (include poet-theme)
 ;; (include dracula-theme)
 ;; (include gotham-theme)
 ;; laguna solarized nightowl monokai monokai-pro
 ;; see peach melpa for more!
-(load-theme 'tango-dark t)
+;; (load-theme 'tango-dark t)
+
