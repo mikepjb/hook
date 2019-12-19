@@ -49,9 +49,11 @@
      `(("M-o" . other-window)
        ("C-c i" . ,(ifn (find-file (concat user-emacs-directory "init.el"))))
        ("C-c g" . magit)
+       ("C-c p" . projectile-find-file)
+       ("C-c P" . projectile-grep)
        ("C-;" . company-capf)
-       ("M-k" . paredit-forward-slurp-sexp)
-       ("M-l" . paredit-forward-barf-sexp)
+       ("M-k" . paredit-forward-barf-sexp)
+       ("M-l" . paredit-forward-slurp-sexp)
        ("M-RET" . toggle-frame-fullscreen)))
   (global-set-key (kbd (car binding)) (cdr binding)))
 
